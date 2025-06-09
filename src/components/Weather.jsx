@@ -13,6 +13,8 @@ const Weather = () => {
 
     const inputRef=useRef();
     const [weatherData,setWeatherData]=useState(false);
+    const [transition,setTrasnsition]=useState(false);
+
     const allIcons={
         "01d":clear,
         "01n":clear,
@@ -38,13 +40,18 @@ const Weather = () => {
             const data=await response.json();
             console.log(data);
             const icon=allIcons[data.weather[0].icon];
-            setWeatherData({
-                humidity:data.main.humidity,
-                windSpeed:data.wind.speed,
-                temperature:Math.floor(data.main.temp),
-                location:data.name,
-                icon:icon
-            })
+
+            setTrasnsition(true);
+            setTimeout(() => {
+                setWeatherData({
+                    humidity: data.main.humidity,
+                    windSpeed: data.wind.speed,
+                    temperature: Math.floor(data.main.temp),
+                    location: data.name,
+                    icon: icon,
+                });
+                setTransition(false); // End transition effect
+            }, 300);
         }
         catch(error){
 
@@ -52,36 +59,47 @@ const Weather = () => {
     }
 
     useEffect(()=>{
-        search("Salem");
+        search();
     },[])
 
   return (
     <div className='weather'>
         <div className="search-bar">
-            <input ref={inputRef} type="text" placeholder='Search'></input>
-            <img src={search_icon} onClick={()=>search(inputRef.current.value)}></img>
+            <input ref={inputRef} type="text" placeholder='Search'
+            onKeyDown={(event)=>{
+                if(event.key==="Enter"){
+                     search(inputRef.current.value);
+                     inputRef.current.value="";
+                }
+            }}></input>
+            <img src={search_icon}
+                onClick={()=>{search(inputRef.current.value);
+                    inputRef.current.value="";
+                }
+                }></img>
         </div>
+        <div class={`weather-details ${transition?'fade-in':'fade-out'}`}>
+            <img src={weatherData.icon} alt="" className='weather-icon'/>
+            <p className='temp'>{weatherData.temperature}॰c </p>
+            <p className='location'>{weatherData.location}</p>
 
-        <img src={weatherData.icon} alt="" className='weather-icon'/>
-        <p className='temp'>{weatherData.temperature}॰c </p>
-        <p className='location'>{weatherData.location}</p>
-
-        <div className="weather-data">
-            <div className="col">
-                <img src={humidity} alt="" />
-                <div>
-                    <p>{weatherData.humidity}%</p>
-                    <span>Humidity</span>
+            <div className="weather-data">
+                <div className="col">
+                    <img src={humidity} alt="" />
+                    <div>
+                        <p>{weatherData.humidity}%</p>
+                        <span>Humidity</span>
+                    </div>
+                </div>
+                <div className="col">
+                    <img src={wind} alt="" />
+                    <div>
+                        <p>{weatherData.windSpeed}kmph</p>
+                        <span>Wind Speed</span>
+                    </div>
                 </div>
             </div>
-            <div className="col">
-                <img src={wind} alt="" />
-                <div>
-                    <p>{weatherData.windSpeed}kmph</p>
-                    <span>Wind Speed</span>
-                </div>
             </div>
-        </div>
     </div>
   )
 }

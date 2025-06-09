@@ -7,8 +7,17 @@
   font-family: "Poppins", serif;
   font-weight: 300;
 }
+body{
+  
+ background: url('/src/assets/weather-bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  margin:0;
+  padding:0;
+}
 .app{
   min-height: 100vh;
   display: grid;
-  background-color: #a1e1fa;
+  place-items: center;
+  backdrop-filter: blur(4px)
 }
